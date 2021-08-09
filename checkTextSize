@@ -1,0 +1,26 @@
+#Need to check that all data is being taken in correct order
+
+import pdfplumber
+import pdfminer
+import re
+
+from pdfminer.high_level import extract_pages
+from pdfminer.layout import LTTextContainer, LTChar, LTText
+
+f = open("RVP_Part22_179_188.pdf", "rb")
+pdf = pdfplumber.open(f)
+
+textfile = open('size.txt', 'w')
+
+for page_layout in extract_pages(f):
+    for element in page_layout:
+      if isinstance(element, LTTextContainer):
+          for text_line in element:
+            if isinstance(text_line, LTText):
+                #if text_line.height < 9.5:       For filtering text size
+                    #print(text_line.get_text())
+                    #print(text_line.height)
+                    textfile.write(text_line.get_text() + '\n' + str(text_line.height) + '\n')
+
+textfile.close()
+print("finished")
