@@ -35,14 +35,14 @@ for record in RecordList:
     breakPointsDiam = ["Diam. c. ", "Diam.", "diam."]
     breakPointsPlate = ["PLATE", " P L A T E"]
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    fuckinTrendall = "from T. "
+    fromExcept = "from T. "
     if record[0] == "":
         pass#Provenence.append(provNo)
     elif record[0] == '*' or record[0] in numbers:
         vaseWithProvList = record.split('\n', 1)
         a = vaseWithProvList[0]
         if "from" in a: #checks that Provenance is included in entry
-            if fuckinTrendall not in a:
+            if fromExcept not in a:
                 d = "from "
                 v = [d+e for e in a.split(d) if e]
                 v.pop(0) 
