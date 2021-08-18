@@ -13,6 +13,7 @@ Text = Text_file.read()
 
 #attribute lists to append
 referenceNo = []
+Provenence = []
 Height = []
 Diameter = []
 Plate = []
@@ -27,6 +28,64 @@ for record in RecordList:
         referenceNo.append('*' + refNo)
     else:
         referenceNo.append(refNo)    
+#extracting Provenence
+for record in RecordList:
+    provNo = " "
+    breakPointsHt = ["Ht", "Ht.", "ht"]
+    breakPointsDiam = ["Diam. c. ", "Diam.", "diam."]
+    breakPointsPlate = ["PLATE", " P L A T E"]
+    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    fuckinTrendall = "from T. "
+    if record[0] == "":
+        pass#Provenence.append(provNo)
+    elif record[0] == '*' or record[0] in numbers:
+        vaseWithProvList = record.split('\n', 1)
+        a = vaseWithProvList[0]
+        if "from" in a: #checks that Provenance is included in entry
+            if fuckinTrendall not in a:
+                d = "from "
+                v = [d+e for e in a.split(d) if e]
+                v.pop(0) 
+
+                if "Ht" in v[0]:
+                    w = v[0].split("Ht")
+                    Provenence.append(w[0])
+                    continue
+                elif "Ht." in v[0]:
+                    w = v[0].split("Ht.")
+                    Provenence.append(w[0])
+                    continue
+                elif "ht" in v[0]:
+                    w = v[0].split("ht")
+                    Provenence.append(w[0])
+                    continue
+                
+                if "Diam. c. " in v[0]:
+                    w = v[0].split("Diam. c. ")
+                    Provenence.append(w[0])
+                    continue
+                elif "Diam." in v[0]:
+                    w = v[0].split("Diam.")
+                    Provenence.append(w[0])
+                    continue
+                elif "diam." in v[0]:
+                    w = v[0].split("diam.")
+                    Provenence.append(w[0])
+                    continue
+                    
+                if "PLATE" in v[0]:
+                    w = v[0].split("PLATE")
+                    Provenence.append(w[0])
+                    continue
+                elif "P L A T E" in v[0]: 
+                    w = v[0].split("P L A T E")
+                    Provenence.append(w[0])
+                    continue
+                Provenence.append(v[0])
+            else:
+                Provenence.append(provNo)
+        else:
+            Provenence.append(provNo)
 
 #ectracting height
 for record in RecordList:
@@ -81,5 +140,5 @@ for record in RecordList:
         Plate.append(plate)
         
 #Writing DataFrames to a csv file 
-df = pd.DataFrame({'ReferenceNo': referenceNo, 'Height': Height, 'Diameter': Diameter, 'Plate': Plate})
+df = pd.DataFrame({'ReferenceNo': referenceNo, 'Provenance': Provenence, 'Height': Height, 'Diameter': Diameter, 'Plate': Plate})
 df.to_csv('AttributesPart1.csv', index=False) 
