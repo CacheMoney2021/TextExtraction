@@ -12,37 +12,37 @@ from pdfminer.layout import LTTextContainer, LTText
 from pdfminer.high_level import extract_pages
 
 text = ''
-fileName = "RVP_Part11_69_78.pdf"
+fileName = "RVP_Part3_69_118.pdf"
 pdf = pdfplumber.open(fileName)
 totalpages = len(pdf.pages)
 f = open("letter.txt", "a")
 
 MAX_TEXT_SIZE = 9.01
-MAX_INDENT = 59
+MAX_INDENT = 61
 #f = open("TrialWithRE.txt", "a")
 
 #for loop to go through pages, extract text, delete the first line (page no. and header) and append to text variable
 for i in range(0, totalpages):
         PageObj = pdf.pages[i]
         print(len(PageObj.chars))
+
         for j in range(0, len(PageObj.chars)):
             if PageObj.chars[j].get("size") < MAX_TEXT_SIZE:
-                Text = PageObj.chars[j].get("text")
-                
-                if PageObj.chars[j].get("x0") < MAX_INDENT:
-                    text += '\n\n' + Text
-                    f.writelines('\n' + '\n' + Text)
+                    Text = PageObj.chars[j].get("text")
+                    count = 0
+                    if PageObj.chars[j].get("x0") < MAX_INDENT:
+                        text += '\n\n' + Text
+                        f.writelines('\n' + '\n' + Text)
+                    else:
+                        text += Text #+ '\n'
+                        f.writelines(Text)
 
-                else:
-                    text += Text #+ '\n'
-                    f.writelines(Text)
 
 
 f.close()       
 rows = text.split('\n')
 plate = []
 
-print(rows)
 
 #regular expression to search for each row starting with '*' or number with 1 or more space character 
 regexp = '^\*|^\d+(?=[ ]{1,})'
