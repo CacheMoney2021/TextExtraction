@@ -8,7 +8,7 @@ Created on Tue Aug 17 14:31:15 2021
 import pandas as pd
 import csv
 import re
-Text_file = open('Part1.txt')
+Text_file = open('Part1.txt', encoding="ISO-8859-1")
 Text = Text_file.read()
 
 #attribute lists to append
@@ -17,8 +17,10 @@ Provenence = []
 Height = []
 Diameter = []
 Plate = []
+Publications = []
 
 RecordList = Text.split('\n\n')
+RecordList.pop()
 
 #extracting reference number
 for record in RecordList:
@@ -27,7 +29,9 @@ for record in RecordList:
         refNo = record.split(sep=" ", maxsplit = 2)[1]
         referenceNo.append('*' + refNo)
     else:
-        referenceNo.append(refNo)    
+        referenceNo.append(refNo)
+
+
 #extracting Provenence
 for record in RecordList:
     provNo = " "
@@ -35,14 +39,14 @@ for record in RecordList:
     breakPointsDiam = ["Diam. c. ", "Diam.", "diam."]
     breakPointsPlate = ["PLATE", " P L A T E"]
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    fromExcept = "from T. "
-    if record[0] == "":
-        pass#Provenence.append(provNo)
+    fuckinTrendall = "from T. "
+    if len(record) == 0:
+        pass
     elif record[0] == '*' or record[0] in numbers:
         vaseWithProvList = record.split('\n', 1)
         a = vaseWithProvList[0]
         if "from" in a: #checks that Provenance is included in entry
-            if fromExcept not in a:
+            if fuckinTrendall not in a:
                 d = "from "
                 v = [d+e for e in a.split(d) if e]
                 v.pop(0) 
@@ -108,6 +112,7 @@ for record in RecordList:
         height = " "
         Height.append(height)
 
+
 #extracting diameter
 for record in RecordList:
     if "Diam. c. " in record:
@@ -127,7 +132,8 @@ for record in RecordList:
         Diameter.append(diameter)
     else:
         diameter = " "
-        Diameter.append(diameter) 
+        Diameter.append(diameter)
+
 
 #extracting plate
 for record in RecordList:
@@ -138,7 +144,23 @@ for record in RecordList:
     else:
         plate = " "
         Plate.append(plate)
-        
+
+
+for record in RecordList:
+    pubs = []
+    firstSplit = record.split(sep='\n', maxsplit = 1)[1]
+    allPubs = re.split("\. \n", firstSplit)[0]
+    if allPubs[0] != "(":   #Potentially change this to an indent check for future Parts
+        pubs = allPubs.split(";")
+        publications = [p.replace("\n", "") for p in pubs] #removing \n from publications
+        Publications.append(publications)
+        print(publications)
+    
+    else:
+        publications = " "
+        Publications.append(publications)
+    
+     
 #Writing DataFrames to a csv file 
-df = pd.DataFrame({'ReferenceNo': referenceNo, 'Provenance': Provenence, 'Height': Height, 'Diameter': Diameter, 'Plate': Plate})
+df = pd.DataFrame({'ReferenceNo': referenceNo, 'Provenence': Provenence, 'Height': Height, 'Diameter': Diameter, 'Plate': Plate, 'Publications': Publications})
 df.to_csv('AttributesPart1.csv', index=False) 
