@@ -43,6 +43,12 @@ f.close()
 rows = text.split('\n')
 plate = []
 
+#for loop to append all sinle character lines to their sentence
+for k in range(0, len(rows)):
+    if len(rows[k]) == 1:
+        rows[k] = rows[k] + rows[k+2]
+        rows[k+2] = rows[k+2].replace(rows[k+2], "")
+
 
 #regular expression to search for each row starting with '*' or number with 1 or more space character 
 regexp = '^\*|^\d+(?=[ ]{1,})'
