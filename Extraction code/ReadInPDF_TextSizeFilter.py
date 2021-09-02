@@ -19,7 +19,24 @@ f = open("letter.txt", "a")
 
 MAX_TEXT_SIZE = 9.01
 MAX_INDENT = 61
-#f = open("TrialWithRE.txt", "a")
+
+shapeFileIn = "VaseShapesReference.txt"
+Shapes = []
+SHAPE_MARKER = "SHAPE: "
+f2 = open(shapeFileIn, encoding = 'latin-1')
+
+for line in f2:
+    shape = line.replace('Ê', ' ')
+    shape = shape.replace('\n', '')
+    Shapes.append(shape.upper())
+    
+f2.close()
+
+while("" in Shapes) :
+    Shapes.remove("")
+while("\n" in Shapes) :
+    Shapes.remove("\n")
+
 
 #for loop to go through pages, extract text, delete the first line (page no. and header) and append to text variable
 for i in range(0, totalpages):
@@ -55,6 +72,10 @@ regexp = '^\*|^\d+(?=[ ]{1,})'
 
 #for loop to go through each row if regex expression satisfied append to list plate and write to text file
 for j in range(0, len(rows)):
+    shapeCheck = rows[j].replace('\n', '')
+    shapeCheck = shapeCheck.strip()
+    shapeCheck = shapeCheck.upper()   
+        
     if re.search(regexp, rows[j]):
         for p_rows in range(j, len(rows)-1):
             plate.append(rows[p_rows])
@@ -65,3 +86,11 @@ for j in range(0, len(rows)):
                 f.close()
                 plate = []
                 break
+
+    elif shapeCheck in Shapes:
+        f = open("TrialWithRE.txt", "a")
+        f.writelines('\n' + SHAPE_MARKER + shapeCheck + '\n' + '\n')
+        f.close()
+        
+    else:
+        pass
