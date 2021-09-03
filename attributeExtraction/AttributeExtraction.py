@@ -27,9 +27,9 @@ for record in RecordList:
     refNo = record.split(sep=" ", maxsplit = 1)[0]
     if refNo == '*':
         refNo = record.split(sep=" ", maxsplit = 2)[1]
-        referenceNo.append('*' + refNo)
+        referenceNo.append('1/*' + refNo)
     else:
-        referenceNo.append(refNo)    
+        referenceNo.append('1/'+ refNo)    
         
 #extractiing location:
 locRegex = r'Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
