@@ -156,6 +156,7 @@ for record in RecordList:
         
 
 Location.append(" ")
+Description.append(" ")
 print(len(referenceNo))
 print(len(Location))
 print(len(Provenance))
