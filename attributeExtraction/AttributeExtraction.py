@@ -27,9 +27,9 @@ for record in RecordList:
     refNo = record.split(sep=" ", maxsplit = 1)[0]
     if refNo == '*':
         refNo = record.split(sep=" ", maxsplit = 2)[1]
-        referenceNo.append('*' + refNo)
+        referenceNo.append('1/*' + refNo)
     else:
-        referenceNo.append(refNo)    
+        referenceNo.append('1/'+ refNo)    
         
 #extractiing location:
 locRegex = r'Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
@@ -52,56 +52,6 @@ for i in range(len(Location)):
         Location[i] = Location[i].split(sep = " from ", maxsplit =1)[0]
 Location.pop()
            
-# for record in RecordList:
-#     print(record)
-    
-# FirstLineList = []    
-# for record in RecordList:
-#     firstLine = record.split(sep = '\n', maxsplit = 1)[0].strip()
-#     refOnwards = firstLine.split(sep=" ", maxsplit = 1)
-#     FirstLineList.append(refOnwards)
-
-# A_list = []
-# FirstLineList.pop(-1)
-# for f_line in FirstLineList:
-#     A_list.append(f_line[1])
-
-# for F_line in A_list:
-#     if "from" in F_line:
-#         location = F_line.split(sep = " from", maxsplit = 1)[0].strip()
-#         Location.append(location)
-#     else:
-#         location = " "
-#         Location.append(location)
-        
-# for i in range(len(Location)):
-#     breakPoints = [' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE']
-#     if Location[i] == " ":
-#         if any(breakPoint in RecordList[i] for breakPoint in breakPoints): 
-#             refOnward = RecordList[i].split(sep = " ", maxsplit = 1)[1].strip()
-#             #print(refOnward.split(sep =" ", maxsplit = 1)[0].strip())
-#             if refOnward.split(sep =" ", maxsplit = 1)[0].strip().isdigit(): #not working for record 100 but working for 101
-#                 refOnward = refOnward.split(sep = " ", maxsplit = 1)[1].strip()
-#             location = re.split(locRegex, refOnward)[0].strip()
-#             Location[i] = location
-#         else:
-#             refOnward = RecordList[i].split(sep = " ", maxsplit = 1)[1].strip()
-#             location = refOnward.split(sep = '\n', maxsplit = 1)[0].strip()
-#             Location[i] = location            
-          
-#print(FirstLineList)
-    #print(refOnwards)
-    # if "from" in refOnwards:
-    #     location = refOnwards.split(" from")[0].strip()
-    #     Location.append(location)
-    # elif any(breakPoint in record for breakPoint in breakPoints):
-    #     location = re.split(locRegex, record)[0].strip()
-    #     Location.append(location)
-    # else:
-    #     location = " "
-    #     Location.append(location)
-
-
 # #extracting Provenence
 proRegex = r'Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
 
@@ -206,6 +156,7 @@ for record in RecordList:
         
 
 Location.append(" ")
+Description.append(" ")
 print(len(referenceNo))
 print(len(Location))
 print(len(Provenance))
@@ -217,5 +168,5 @@ print(len(Description))
 
         
 #Writing DataFrames to a csv file
-# df = pd.DataFrame({'ReferenceNo': referenceNo,'Location': Location, 'Provenance': Provenance, 'Height': Height, 'Diameter': Diameter, 'Plate': Plate})
-# df.to_csv('ExtractedAttributes.csv', index=False)
+df = pd.DataFrame({'ReferenceNo': referenceNo,'Location': Location, 'Provenance': Provenance, 'Height': Height, 'Diameter': Diameter, 'Plate': Plate, 'Publications' : Publications, 'Description': Description})
+df.to_csv('ExtractedAttributes.csv', index=False)
