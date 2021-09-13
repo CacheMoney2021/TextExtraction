@@ -124,17 +124,44 @@ for record in RecordList:
         plate = " "
         Plate.append(plate)
         
+
 #extracting publication
 for record in RecordList:
     pubs = []
+    checkPub = ' [0-9]+'
+    removeList = ['above', '\\\\', ' \l.', ' r.', '(a)', '[a)']
+    
     firstSplit = record.split(sep='\n', maxsplit = 1)[1]
     allPubs = re.split("\. \n", firstSplit)[0]
-    if allPubs[0] != "(":   #Potentially change this to an indent check for future Parts
-        pubs = allPubs.split(";")
-        publications = [p.replace("\n", "") for p in pubs] #removing \n from publications
-        Publications.append(publications)
-        #print(publications)
-    
+
+    if 'PLATE' in allPubs:
+        allPubs = allPubs.split(sep='PLATE')[1]
+        allPubs = (allPubs.split('\n')[1])
+
+    if re.search(checkPub, allPubs):
+        if allPubs[0] != "(":   #Potentially change this to an indent check for future Parts
+            pubs = allPubs.split(";")
+
+            for p in pubs:
+                removeIndex = []
+                for r in removeList:
+                    if r in p:
+                        removeIndex.append(pubs.index(p)) #record 1/99 has an r. and isn't being removed.
+
+                removeIndex = list( dict.fromkeys(removeIndex) )
+                if len(removeIndex) > 0:
+                    for i in removeIndex:
+                        pubs[i] = ''
+                while '' in pubs:
+                        pubs.remove('')
+            
+            publications = [p.replace("\n", "") for p in pubs] #removing \n from publications
+            Publications.append(publications)
+
+        else:
+            publications = " "
+            Publications.append(publications)
+
     else:
         publications = " "
         Publications.append(publications)
