@@ -51,6 +51,7 @@ while("" in RecordList):
 #attribute lists to append
 referenceNo = []
 Location = []
+previousLocation = []
 Provenance = []
 Height = []
 Diameter = []
@@ -98,6 +99,7 @@ locRegex = r'Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
 startLine = '^\d+'
 
 for record in RecordList:
+      #previousLocation code needs to be added
       breakPoints = [' from ', ' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE']
       locationOnwards = record.split(sep=" ", maxsplit = 1)[1].strip()
       if re.search(startLine, locationOnwards):
