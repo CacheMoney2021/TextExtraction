@@ -11,28 +11,32 @@ import pdfplumber
 fileName = "RVP.pdf"
 pdf = pdfplumber.open(fileName)
 totalpages = len(pdf.pages)
-MAX_TEXT_SIZE = 9.01
-MAX_INDENT = 61
+MAX_TEXT_SIZE = 9.01 #For filtering out paragraph text
+MAX_INDENT = 61 #For checking new entries
 
-def FilterFontSize(startPage, endPage, outputFile):
+def FilterFontSize(startPage, endPage, outputFile): 
     f = open(outputFile, "a")
     for i in range(startPage,endPage): #88-293 part 2
-        previous_height = 0
+        previous_height = 0 #to check for new lines
         write = True
         PageObj = pdf.pages[i]
-        for j in range(0, len(PageObj.chars)):
+        for j in range(0, len(PageObj.chars)): #while there are still characters to be read
             if write:
                 current_height = PageObj.chars[j].get("top")
-                if PageObj.chars[j].get("size") < MAX_TEXT_SIZE:
+                
+                if PageObj.chars[j].get("size") < MAX_TEXT_SIZE: #check if entry based on size
                     Text = PageObj.chars[j].get("text")
-                    if current_height > previous_height:
+                    
+                    if current_height > previous_height: #check if entry continues onto new line
                         Text = '\n' + Text
                         previous_height = current_height
-                        if 5.000 < PageObj.chars[j].get("size") < 6.00:
-                            write = False
+                        
+                        if 5.000 < PageObj.chars[j].get("size") < 6.00: #check if footnote.
+                            write = False #do not write footnotes to output file
+                        
                         if write:
-                            if PageObj.chars[j].get("x0") < MAX_INDENT:
-                                f.writelines('\n' + Text)
+                            if PageObj.chars[j].get("x0") < MAX_INDENT: #Check if beginning of new entry
+                                f.writelines('\n' + Text) #Add \n to mark new entry
                             else:
                                 f.writelines(Text)
                     else:
