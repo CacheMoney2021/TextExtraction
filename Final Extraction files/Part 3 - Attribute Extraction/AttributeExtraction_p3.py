@@ -255,14 +255,6 @@ while("" in imagePlate):
     
 while("" in refImage):
     refImage.remove("")
-
-# #plate testing
-# regLetter = r'[a-z]'
-# for i in range(len(imagePlate)):
-#     if re.search(regLetter, imagePlate[i]):
-#         print(imagePlate[i])
-        
-    
     
 
 # #extracting publication
