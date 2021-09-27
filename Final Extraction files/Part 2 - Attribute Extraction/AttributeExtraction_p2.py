@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 14 12:59:40 2021
-
-@author: aayes
-"""
 
 import re
 import pandas as pd
@@ -13,7 +7,6 @@ shape = shape_file.read()
 ShapeList = shape.split('\n')
 for i in range(len(ShapeList)):
     ShapeList[i] = ShapeList[i].strip()
-    #print(shape)
 ShapeList.pop()
 
 regExp = '^(?!\d+|\*|\•).*'
@@ -29,7 +22,6 @@ for i in range(len(RecordList)):
         #print(i)
         else:
             RecordList[i] = ""
-
 
 while("" in RecordList):
     RecordList.remove("")
@@ -51,7 +43,6 @@ while("" in RecordList):
 #attribute lists to append
 referenceNo = []
 Location = []
-previousLocation = []
 Provenance = []
 Height = []
 Diameter = []
@@ -61,6 +52,7 @@ Description = []
 Shape= []
 Fabric = []
 Technique = []
+previousLocation = []
 
 regShape = '^(?!SHAPE: ).*'
 
@@ -90,36 +82,69 @@ for record in RecordList:
         refNo = record.split(sep=" ", maxsplit = 1)[0]
         if refNo == '*':
             refNo = record.split(sep=" ", maxsplit = 2)[1]
-            referenceNo.append('*' + refNo)
+            referenceNo.append('2-' + refNo)
         else:
-            referenceNo.append(refNo)
+            referenceNo.append('2-' + refNo)
             
+for i in range(len(referenceNo)):
+    referenceNo[i] = referenceNo[i].replace('*', "")   
+    referenceNo[i] = referenceNo[i].replace('•', "")      
+                
 #extractiing location:
-locRegex = r'Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
+locRegex = r'Broken|broken|Max|max|Actual|actual|Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
 startLine = '^\d+'
 
 for record in RecordList:
-      #previousLocation code needs to be added
-      breakPoints = [' from ', ' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE']
+      breakPoints = [' Broken',' broken',' Max ',' max ',' Actual ',' actual ',' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE']
       locationOnwards = record.split(sep=" ", maxsplit = 1)[1].strip()
       if re.search(startLine, locationOnwards):
           locationOnwards = locationOnwards.split(sep=" ", maxsplit = 1)[1].strip()
       if any(breakPoint in record for breakPoint in breakPoints):
             location = re.split(locRegex, locationOnwards)[0]
             Location.append(location)
+            previousLocation.append("")
       else:
             location = locationOnwards.split(sep = '\n', maxsplit = 1)[0].strip()
             Location.append(location)
+            previousLocation.append("")
             
 for i in range(len(Location)):
     if " from " in Location[i]:
         Location[i] = Location[i].split(sep = " from ", maxsplit =1)[0]
 
+#removing /n from final Location List
+for i in range(len(Location)):
+    Location[i] = Location[i].replace('\n', ' ')
+    
+#excracting previousLocation
+regPrev = r'\(ex |ex '
+for i in range(len(Location)):
+    if Location[i].startswith('(a)'):
+        Location[i] = Location[i].replace('(a)', "").strip()
+    if Location[i].startswith('Once '):
+        prev = Location[i]
+        Location[i] = ""
+        prev = prev.replace("Once ", "")
+        previousLocation[i] = prev
+    if 'ex ' in Location[i]:
+        previousLocation[i] = re.split(regPrev, Location[i])[1].strip()
+        Location[i] = re.split(regPrev, Location[i])[0].strip()
+        
+for i in range(len(previousLocation)):
+    if "(" in previousLocation[i]:
+        previousLocation[i] = previousLocation[i]
+    else:
+        previousLocation[i] = previousLocation[i].replace(').',"")
+
+#removing /n from final previousLocation List
+for i in range(len(previousLocation)):
+    previousLocation[i] = previousLocation[i].replace('\n', ' ')
+
 #extracting Provenence
-proRegex = r'Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
+proRegex = r'Broken|broken|Fragments|fragments|Max|max|Actual|actual|Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
 
 for record in RecordList:
-    breakPoints = [' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE']
+    breakPoints = [' Broken',' broken',' Fragments',' fragments',' Max ',' max ',' Actual ',' actual ',' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE']
     firstLine = record.split(sep = '\n', maxsplit = 1)[0]
     if "from" in firstLine and any(breakPoint in record for breakPoint in breakPoints):
         provenanceOnwards = record.split(sep="from", maxsplit = 1)[1].strip()
@@ -132,6 +157,10 @@ for record in RecordList:
     else:
         provenance = ""
         Provenance.append(provenance)
+        
+#removing /n from final Provenance List
+for i in range(len(Provenance)):
+    Provenance[i] = Provenance[i].replace('\n', ' ')
 
 #extracting height
 heights = r'Ht.|ht.|Ht'
@@ -174,6 +203,54 @@ for record in RecordList:
         plate = " "
         Plate.append(plate)
         
+#Converting Plate into number format 
+NewPlate = []
+Text = ""
+
+for i in range(len(Plate)):
+    plate = Plate[i].replace(" ", "-")
+    plate = Plate[i].lower()
+    for char in plate:
+        if char.islower():
+            charNum = ord(char) - 96
+            Text = Text + " " + str(charNum)
+        else:
+            Text = Text + str(char)
+    NewPlate.append(Text)
+    Text = ""
+   
+regSpace = re.compile(r"\s+") #r'\s+'
+for i in range(len(NewPlate)):
+    NewPlate[i] = NewPlate[i].strip()
+    NewPlate[i] = NewPlate[i].replace(",", " ")
+    NewPlate[i] = regSpace.sub(" ", NewPlate[i])    
+    NewPlate[i] = NewPlate[i].replace(" ", "-")
+    NewPlate[i] = NewPlate[i].replace("--", "-")
+
+imagePlate = []
+refImage = []
+for i in range(len(NewPlate)):
+    count = NewPlate[i].count('-',0,len(NewPlate[i]))
+    if count < 2:
+        imagePlate.append(NewPlate[i])
+        refImage.append(referenceNo[i])
+    else:
+        imageID = NewPlate[i].split(sep = '-', maxsplit = count)[0]
+        plateList = NewPlate[i].split(sep = '-', maxsplit = count)
+        for j in range(1,len(plateList)):
+           imagePlate.append(imageID + '-' + plateList[j])
+           refImage.append(referenceNo[i])
+
+for i in range(len(imagePlate)):
+    if imagePlate[i] == "":
+        refImage[i] = refImage[i].replace(refImage[i], "")
+
+while("" in imagePlate):
+    imagePlate.remove("")
+
+while("" in refImage):
+    refImage.remove("")
+        
 #extracting publication
 for record in RecordList:
     pubs = []
@@ -215,17 +292,22 @@ for record in RecordList:
                 Publications.append(publications)
     
             else:
-                publications = []
+                publications = ""
                 Publications.append(publications)
     
         else:
-            publications = []
+            publications = ""
             Publications.append(publications)
     else:
-        publications = []
+        publications = ""
         Publications.append(publications) 
 
-#description = []        
+#replacing empty array [] in Publications with ""
+for i in range(len(Publications)):
+    if len(Publications[i]) == 0:
+        Publications[i] = ""
+
+        
 # #extracting Desciption
 regDesc = r'PP|PAdd|PPSupp|pp. | pi. \d+| p. \d+'
 regBreakPoint = r'Ht.|ht.|Ht|Diam. c.|Diam|diam|PLATES|PLATE'
@@ -248,7 +330,7 @@ for record in RecordList:
             description = description.split(sep='\n', maxsplit =1 )[1]
         Description.append(description)
     else:
-        description = ""
+        description = ''
         Description.append(description)
 regPub = r'PAdd|PP'
 for i in range(len(Description)):
@@ -256,12 +338,50 @@ for i in range(len(Description)):
         if re.search(regPub, Description[i]):
             Description[i] = ''
             
+#removing /n from final description List
+for i in range(len(Description)):
+    Description[i] = Description[i].replace('\n', ' ')
+
+#List of fabric and Technique            
 for i in range(len(RecordList)):
     Fabric.append("Paestan")
 
 for i in range(len(RecordList)):
     Technique.append("Red-Figure")
 
+#removing punctuations from the end of elements in list (e.g ",") to prevent it from interfering with the database
+puncCheck = r'[^\w\s]' #match for word, number, or space
+for i in range(len(RecordList)):
+    Location[i] = Location[i].strip()
+    previousLocation[i] = previousLocation[i].strip()
+    Provenance[i] = Provenance[i].strip()
+    Height[i] = Height[i].strip()
+    Diameter[i] = Diameter[i].strip()
+    Description[i] = Description[i].strip()
+    if not len(previousLocation[i]) == 0:
+        if re.search(puncCheck,previousLocation[i][-1]):
+            previousLocation[i] = previousLocation[i][:-1]
+    if not len(Location[i]) == 0:
+        if re.search(puncCheck,Location[i][-1]):
+            Location[i] = Location[i][:-1]
+    if not len(Provenance[i]) == 0:
+        if re.search(puncCheck,Provenance[i][-1]):
+            Provenance[i] = Provenance[i][:-1]
+    if not len(Height[i]) == 0:
+        if re.search(puncCheck,Height[i][-1]):
+            Height[i] = Height[i][:-1]
+    if not len(Diameter[i]) == 0:
+        if re.search(puncCheck,Diameter[i][-1]):
+            Diameter[i] = Diameter[i][:-1]  
+    if not len(Description[i]) == 0:
+        if re.search(puncCheck,Description[i][-1]):
+            Description[i] = Description[i][:-1]
+    
+
 #Writing DataFrames to a csv file
-df = pd.DataFrame({'ReferenceNo': referenceNo,'Location': Location, 'Provenance': Provenance, 'Height': Height, 'Diameter': Diameter, 'Plate': Plate, 'Publications': Publications, 'Description': Description, 'Shape': Shape, 'Fabric': Fabric, 'Technique': Technique})
+df = pd.DataFrame({'ReferenceNo': referenceNo,'Location': Location, 'Previous Location': previousLocation, 'Provenance': Provenance, 'Height': Height, 'Diameter': Diameter, 'Publications': Publications, 'Description': Description, 'Shape': Shape, 'Fabric': Fabric, 'Technique': Technique})
 df.to_csv('AttributeExtraction_p2.csv', index=False)
+
+#writing refImage and imagesPlate to csv file
+df1 = pd.DataFrame({'ReferenceNo': refImage, 'Plate': imagePlate})
+df1.to_csv('PlateAttribute_p2.csv', index=False)
