@@ -2,6 +2,7 @@
 import re
 import pandas as pd
 
+#Creating reference list to check Shapes against
 shape_file = open("VaseShapesReference.txt")
 shape = shape_file.read()
 ShapeList = shape.split('\n')
@@ -9,23 +10,25 @@ for i in range(len(ShapeList)):
     ShapeList[i] = ShapeList[i].strip()
 ShapeList.pop()
 
-regExp = '^(?!\d+|\*|\•).*'
+regExp = '^(?!\d+|\*|\•).*' 
 f = open("Part2.txt")
 f_read = f.read()
 RecordList = f_read.split('\n\n')
 
-    
+#removing paragraph lines
+#if the entry DOESN'T start with a number, check if it's a Shape entry otherwise remove.
 for i in range(len(RecordList)):
     if re.search(regExp, RecordList[i]):
         if RecordList[i].upper().strip() in ShapeList:
             RecordList[i] = "SHAPE: " + RecordList[i]
-        #print(i)
         else:
             RecordList[i] = ""
 
 while("" in RecordList):
     RecordList.remove("")
- 
+
+#removing paragraph lines that start with a number
+#if it doesn't contain any entry terms, remove.
 regFrom = r' from [A-Z]'
 for i in range(len(RecordList)):
     breakPoints = [' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE', '(a)', '[a)', 'SHAPE: ']
@@ -37,8 +40,6 @@ for i in range(len(RecordList)):
 
 while("" in RecordList):
     RecordList.remove("")
-
-        
 
 #attribute lists to append
 referenceNo = []
@@ -90,13 +91,15 @@ for i in range(len(referenceNo)):
     referenceNo[i] = referenceNo[i].replace('*', "")   
     referenceNo[i] = referenceNo[i].replace('•', "")      
                 
-#extractiing location:
+#extracting location:
 locRegex = r'Broken|broken|Max|max|Actual|actual|Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
 startLine = '^\d+'
 
 for record in RecordList:
       breakPoints = [' Broken',' broken',' Max ',' max ',' Actual ',' actual ',' Ht.', ' ht.', ' Ht', ' Diam. c.', ' Diam', ' diam', ' PLATE']
       locationOnwards = record.split(sep=" ", maxsplit = 1)[1].strip()
+      
+      #removing vase number from entry. Location, if exists, is next attribute. 
       if re.search(startLine, locationOnwards):
           locationOnwards = locationOnwards.split(sep=" ", maxsplit = 1)[1].strip()
       if any(breakPoint in record for breakPoint in breakPoints):
@@ -108,6 +111,7 @@ for record in RecordList:
             Location.append(location)
             previousLocation.append("")
             
+#removing 'from' in Location
 for i in range(len(Location)):
     if " from " in Location[i]:
         Location[i] = Location[i].split(sep = " from ", maxsplit =1)[0]
@@ -121,11 +125,15 @@ regPrev = r'\(ex |ex '
 for i in range(len(Location)):
     if Location[i].startswith('(a)'):
         Location[i] = Location[i].replace('(a)', "").strip()
+        
+    #If current location is unknown and previous location is known, location starts with 'Once '
     if Location[i].startswith('Once '):
         prev = Location[i]
         Location[i] = ""
         prev = prev.replace("Once ", "")
         previousLocation[i] = prev
+        
+    #If current location known and previous location know, location contains 'ex '.
     if 'ex ' in Location[i]:
         previousLocation[i] = re.split(regPrev, Location[i])[1].strip()
         Location[i] = re.split(regPrev, Location[i])[0].strip()
@@ -141,6 +149,7 @@ for i in range(len(previousLocation)):
     previousLocation[i] = previousLocation[i].replace('\n', ' ')
 
 #extracting Provenence
+#Provenance always preceeded by 'from '
 proRegex = r'Broken|broken|Fragments|fragments|Max|max|Actual|actual|Ht.|ht.|Ht|Diam. c.|Diam.|diam.|PLATE'
 
 for record in RecordList:
@@ -203,7 +212,7 @@ for record in RecordList:
         plate = " "
         Plate.append(plate)
         
-#Converting Plate into number format 
+#Converting Plate into number format for database image reference
 NewPlate = []
 Text = ""
 
@@ -255,11 +264,17 @@ while("" in refImage):
 for record in RecordList:
     pubs = []
     checkPub = ' [0-9]+'
+    
+    #tokens that appear in most descriptions, but never in publications
     removeList = ['above', '\\\\', ' \l.',' 1.', ' r.', '(a)', '[a)']
+    
+    #removing first line of entry- never contains publication info
     if '\n' in record:
         firstSplit = record.split(sep='\n', maxsplit = 1)[1]
-        #if not firstSplit =="":
         allPubs = re.split("\. \n", firstSplit)[0]
+        
+        #where first line of vase info requires a second line, it always contains a plate as final attribute
+        #removing any second lines that end in PLATE
         if 'PLATE' in allPubs:
             allPubs = allPubs.split(sep='PLATE')[1]
             allPubs = (allPubs.split('\n')[1])
@@ -272,6 +287,7 @@ for record in RecordList:
                 pubs.pop(len(pubs)-1)
                 pubs.append(addPub[0])
     
+                #Removing description lines
                 for p in pubs:
                     removeIndex = []
                     for r in removeList:
@@ -283,12 +299,10 @@ for record in RecordList:
                         n = len(pubs)
                         for i in range(0, n - removeIndex[0]):
                             pubs.pop()
-                        # for i in removeIndex:
-                        #     pubs[i] = ''
                     while '' in pubs:
                             pubs.remove('')
     
-                publications = [p.replace("\n", "") for p in pubs] #removing \n from publications
+                publications = [p.replace("\n", "") for p in pubs]
                 Publications.append(publications)
     
             else:
@@ -308,7 +322,7 @@ for i in range(len(Publications)):
         Publications[i] = ""
 
         
-# #extracting Desciption
+# #extracting Description
 regDesc = r'PP|PAdd|PPSupp|pp. | pi. \d+| p. \d+'
 regBreakPoint = r'Ht.|ht.|Ht|Diam. c.|Diam|diam|PLATES|PLATE'
 for record in RecordList:
@@ -322,7 +336,7 @@ for record in RecordList:
     elif '\n' in record:
         description = record.split(sep='\n', maxsplit = 1)[1].strip()
         if re.search(regDesc,description):
-            if '. \n' in description:
+            if '. \n' in description: #marks end of Publications
                 description = description.split(sep = '. \n', maxsplit=1)[1].strip()
                 if re.search(regDesc,description):
                     description = description.split(sep = '. \n', maxsplit=1)[1].strip()
@@ -332,6 +346,8 @@ for record in RecordList:
     else:
         description = ''
         Description.append(description)
+
+#Removing Publications not being caught
 regPub = r'PAdd|PP'
 for i in range(len(Description)):
     if not '\n' in Description[i]:
@@ -342,10 +358,11 @@ for i in range(len(Description)):
 for i in range(len(Description)):
     Description[i] = Description[i].replace('\n', ' ')
 
-#List of fabric and Technique            
+#List of Fabric            
 for i in range(len(RecordList)):
     Fabric.append("Paestan")
 
+#List of Technique
 for i in range(len(RecordList)):
     Technique.append("Red-Figure")
 
