@@ -8,6 +8,8 @@ CacheMoney2021/TextExtraction is a Python library for reading in journal pdfs an
 Filter code removes non-artefact information, such as paragraphs. The resulting text file is then run through Extraction code, to identify 
 the attributes for each artefact entry and produce a file that can be uploaded to a database. 
 
+This code was developed by Aayesha Mohammed, Mariyam Mohammed and Rogue Lyons.
+
 # Installation
 This project can be downloaded from Github. 
 
