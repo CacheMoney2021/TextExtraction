@@ -46,17 +46,19 @@ The AttributeExtraction.csv files contain vase data, while the plates.csv files 
 reference. These files are intended to be used for populating the database.
 
 # Known Bugs
-12/10/2021- Some shapes not extracted as text is too large and not caught by the current filter. This results in some vases being 
+### 12/10/2021
+- Some shapes not extracted as text is too large and not caught by the current filter. This results in some vases being 
 incorrectly categorised.
+- If attempting to read in empty pages as part of a pdf, the program crashes.
 
 # Authors and acknowledgment
 The developers of this project acknowledge the Wurundjeri people, Traditional Custodians of the land on which we live and work. We recognise their continued connection to the land and waters of this beautiful place, and acknowledge that they never ceded sovereignty. We pay our respects to their Elders past, present and emerging. 
 
+We would like to thank Scott Mann and Alex Nguyen for their work running this project and advising our team, and Dr Gillian Shepherd for her time and expertise in Arthur Trendall's work. 
+
 # License
-For open source projects, say how it is licensed.
+
 
 # Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped 
-completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. 
-You can also make an explicit request for maintainers.
+
 
