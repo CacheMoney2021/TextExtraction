@@ -50,7 +50,7 @@ reference. These files are intended to be used for populating the database.
 incorrectly categorised.
 
 # Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+The developers of this project acknowledge the Wurundjeri people, Traditional Custodians of the land on which we live and work. We recognise their continued connection to the land and waters of this beautiful place, and acknowledge that they never ceded sovereignty. We pay our respects to their Elders past, present and emerging. 
 
 # License
 For open source projects, say how it is licensed.
