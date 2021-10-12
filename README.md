@@ -1,10 +1,5 @@
 # TextExtraction
-for text extraction code experiments
 
-# Name
-CacheMoney2021/TextExtraction
-
-# Description
 Developed for La Trobe’s CSE3PRA/PRB 2021. The Arthur Trendall Research Centre is a research centre for the study of ancient Mediterranean 
 artefacts, much of their resources are paper based. They asked us to develop a tool they could use to extract artefact information from pdf 
 scans of Trendall’s works, in order to make the artefacts accessible online.
