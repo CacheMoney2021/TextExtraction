@@ -1,3 +1,7 @@
+"""
+Authors: Aayesha Mohammed, Mariyam Mohammed, Rogue Lyons
+"""
+
 import pdfplumber
 
 
