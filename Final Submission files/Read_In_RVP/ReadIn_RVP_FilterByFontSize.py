@@ -36,6 +36,6 @@ def FilterFontSize(startPage, endPage, outputFile):
     f.close()  
     
 
-#FilterFontSize(55, 82, "Part1.txt")
-#FilterFontSize(88, 293, "Part2.txt")
+FilterFontSize(55, 82, "Part1.txt")
+FilterFontSize(88, 293, "Part2.txt")
 FilterFontSize(301, 394, "Part3.txt") 
