@@ -1,3 +1,7 @@
+"""
+Authors: Aayesha Mohammed, Mariyam Mohammed, Rogue Lyons
+"""
+
 import re
 import pandas as pd
 
