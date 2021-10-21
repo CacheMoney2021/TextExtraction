@@ -1,3 +1,4 @@
 pandas==1.2.4
+pdfminer==20191125
 pdfplumber==0.5.28
 python==3.8.8
