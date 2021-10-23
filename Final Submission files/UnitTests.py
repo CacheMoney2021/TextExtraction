@@ -57,7 +57,7 @@ def diameterTest(input, expectedOutput):
     else:
         diameter = " "
     
-        print( "Diameter: " + diameter + " Expected Output: " + expectedOutput + " Test is: " + str(diameter == expectedOutput))
+    print( "Diameter: " + diameter + " Expected Output: " + expectedOutput + " Test is: " + str(diameter == expectedOutput))
 
 #Collection test
 def collectionTest(input, expectedOutput):
