@@ -47,6 +47,9 @@ AttributeExtraction_p2.csv, AttributeExtraction_p3.csv, plates_p1.csv, plates_p2
 The AttributeExtraction.csv files contain vase data, while the plates.csv files contain plate references and their corresponding vase 
 reference. These files are intended to be used for populating the database.
 
+### Note: Unimplemented Folder in Read_In_RVP
+This folder contains code that catches missed Shape entries and Artist Names. It is not part of running the code, this file is included in the hopes that it can help any future work on this project.
+
 # Known Bugs
 ### 12/10/2021
 - Some shapes not extracted as text is too large and not caught by the current filter. This results in some vases being 
@@ -58,9 +61,6 @@ The developers of this project acknowledge the Wurundjeri people, Traditional Cu
 
 We would like to thank Scott Mann and Alex Nguyen for their work running this project and advising our team, and Dr Gillian Shepherd for her time and expertise in Arthur Trendall's work. 
 
-# License
 
-
-# Project status
 
 
