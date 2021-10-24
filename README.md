@@ -29,9 +29,10 @@ pdfplumber (0.5.28)
 python -m pip install -r requirements.txt
 ```
 
-If running the requirements.txt file fails to install pandas, run the command
+If running the requirements.txt file fails to install pandas and/or pdfplumber, run the command/s
 ```
 pip install pandas
+pip install pdfplumber==0.1.2
 ```
 within the Final Submission folder.
 
