@@ -29,6 +29,12 @@ pdfplumber (0.5.28)
 python -m pip install -r requirements.txt
 ```
 
+If running the requirements.txt file fails to install pandas, run the command
+```
+pip install pandas
+```
+within the Final Submission folder.
+
 # Usage
 This code is designed specifically for the RVP.pdf file supplied to the project. This file is not uploaded onto Github, as it is too large. 
 The following usage assumes that the user has the required PDF.
